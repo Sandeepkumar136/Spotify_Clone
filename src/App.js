@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 function App() {
@@ -8,11 +7,15 @@ function App() {
   const [isLoading, setIsLoading]=useState(true)
   const [tracks, setTracks]= useState([]);
   const getTracks= async()=>{
-    let data= await fetch(`https://v1.nocodeapi.com/sandeep_kumar136/spotify/BBbkuQfJlkurZJzF/search?q=${keyword}&type=track`);
+    setIsLoading(true)
+    let data= await fetch(`https://v1.nocodeapi.com/sandeep_kumar136/spotify/BBbkuQfJlkurZJzF/search?q=${keyword==""?"trending":"keyword"}&type=track`);
     let convertedData= await data.json();
-    console.log(convertedData.tracks.items);
     setTracks(convertedData.tracks.items);
+    setIsLoading(false);
   };
+  useEffect(()=>{
+    getTracks();
+  }, []);
 
   return <>  
   <nav className="navbar navbar-dark navbar-expand-lg bg-dark">
@@ -35,6 +38,19 @@ function App() {
 </nav>
 
 <div className='container'>
+<div className={`row ${isLoading ?"":"d-none" }`}>
+  <div className='col-12 py-5 text-center'>
+  <div
+  className="spinner-border"
+  style={{ width: "3rem", height: "3rem" }}
+  role="status"
+>
+  <span className="visually-hidden">Loading...</span>
+</div>
+
+
+  </div>
+</div>
   <div className='row'>
     {
       tracks.map((element)=>{
